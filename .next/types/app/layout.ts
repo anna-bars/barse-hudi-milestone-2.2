@@ -1,4 +1,4 @@
-// File: C:\Users\barse\Downloads\barse-hudi-milestone-2.1-main (3)\barse-hudi-milestone-2.1-main\app\layout.js
+// File: C:\Users\barse\Downloads\barse-hudi-milestone-2.2\app\layout.js
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

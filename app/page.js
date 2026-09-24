@@ -29,12 +29,46 @@ export default function Page() {
   const [visemeName, setVisemeName] = useState('sil');
   const [lastEmotion, setLastEmotion] = useState(null);
 
-  const { rive, RiveComponent } = useRive({
-    src: '/hudi.riv',
-    stateMachines: STATE_MACHINE,
-    autoplay: true,
-    layout: new Layout({ fit: Fit.Contain, alignment: Alignment.Center }),
-  });
+  const [riveUrl, setRiveUrl] = useState(null);
+
+  useEffect(() => {
+    let objectUrl = null;
+
+    const loadRive = async () => {
+      try {
+        const response = await fetch('/api/rive');
+
+        if (!response.ok) {
+          throw new Error('Failed to load Rive file');
+        }
+
+        const blob = await response.blob();
+
+        objectUrl = URL.createObjectURL(blob);
+        setRiveUrl(objectUrl);
+      } catch (error) {
+        console.error('Rive loading error:', error);
+      }
+    };
+
+    loadRive();
+
+    return () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
+  }, []);
+
+const { rive, RiveComponent } = useRive({
+  src: riveUrl,
+  stateMachines: STATE_MACHINE,
+  autoplay: true,
+  layout: new Layout({
+    fit: Fit.Contain,
+    alignment: Alignment.Center
+  }),
+});
 
   const eyeXInput = useStateMachineInput(rive, STATE_MACHINE, 'eye_x');
   const eyeYInput = useStateMachineInput(rive, STATE_MACHINE, 'eye_y');
@@ -159,7 +193,7 @@ export default function Page() {
           <div className="stage-grid" />
           <div className="stage-tag"><span className="dot" />Live on canvas</div>
           <div className="canvas-wrap">
-            <RiveComponent />
+            {riveUrl && <RiveComponent />}
           </div>
           <div className="stage-hex">#4719EA</div>
         </div>
